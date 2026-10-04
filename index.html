@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAIFOUNA | NEURO-OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <div id="terminal-console" class="hidden">
+        <div id="terminal-header">
+            <span>SYS_TELEMETRY</span>
+            <span class="flex items-center gap-2">
+                <span class="status-dot bg-green-500"></span>
+                <span>LIVE</span>
+            </span>
+        </div>
+        <div id="terminal-logs" class="custom-scroll"></div>
+    </div>
+
+    <div id="login-screen" class="fixed inset-0 z-[10001] flex items-center justify-center">
+        <div class="glass-card p-16 w-[500px] text-center space-y-8">
+            <div>
+                <h1 class="text-5xl font-black tracking-tighter mb-3 glitch" data-text="SAIFOUNA">SAIFOUNA</h1>
+                <p class="text-cyan-400 text-2xl font-bold tracking-[0.4em]">NEURO-OS</p>
+                <div class="h-1 w-40 mx-auto mt-6 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                <p class="text-xs text-gray-600 mt-4 uppercase tracking-widest">Neural Handshake Protocol</p>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs text-cyan-400 uppercase tracking-[0.3em] block mb-3">Bio-Neural ID</label>
+                    <input 
+                        type="password" 
+                        id="neural-id-input" 
+                        placeholder="________" 
+                        class="w-full bg-transparent border-b-2 border-cyan-900 text-center text-4xl tracking-[1em] py-4 outline-none focus:border-cyan-400 transition font-mono">
+                </div>
+
+                <button 
+                    id="login-btn"
+                    class="w-full py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-black text-sm uppercase tracking-[0.3em] hover:from-cyan-400 hover:to-blue-500 transition rounded-lg shadow-[0_0_30px_rgba(0,242,255,0.4)]">
+                    <i class="fas fa-power-off mr-3"></i>INITIALIZE NEURAL LINK
+                </button>
+            </div>
+
+            <div class="text-center text-xs text-gray-700 space-y-2 font-mono">
+                <p><i class="fas fa-shield-alt mr-2"></i>Demo Session Active</p>
+                <p>BUILD ALPHA | CORE</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <nav class="nav-container">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl font-black italic tracking-tighter">
+                        SAIFOUNA<span class="text-cyan-400">.OS</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-8">
+                    <button class="nav-btn active" data-layer="core">
+                        <i class="fas fa-brain mr-2"></i>CORE
+                    </button>
+                    <button class="nav-btn" data-layer="archives">
+                        <i class="fas fa-archive mr-2"></i>ARCHIVES
+                    </button>
+                    <button class="nav-btn" data-layer="uplink">
+                        <i class="fas fa-satellite-dish mr-2"></i>UPLINK
+                    </button>
+                    <button class="nav-btn" data-layer="research">
+                        <i class="fas fa-search mr-2"></i>RESEARCH
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p id="operator-name" class="text-xs font-bold uppercase text-white">OPERATOR</p>
+                        <p id="operator-id" class="text-[9px] text-cyan-600 font-mono">ID: #NEURAL-XXX</p>
+                    </div>
+                    <button id="logout-btn" class="text-red-400 hover:text-red-300 transition text-xs">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div id="core-layer" class="layer active">
+            <div class="w-full max-w-6xl">
+                <div class="glass-card p-8 mb-6">
+                    <div class="flex justify-between items-center mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-16 h-16 border-2 border-cyan-500/30 rounded-full animate-spin" style="animation-duration: 8s;"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="fas fa-brain text-2xl text-cyan-400"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold uppercase tracking-wider">Neural Synthesizer</h2>
+                                <p class="text-xs text-gray-500 font-mono">CORE ENGINE</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 text-[10px] font-mono">
+                            <div class="flex items-center gap-2">
+                                <span class="status-dot bg-green-500"></span>
+                                <span class="text-gray-500">SYNC: <span id="sync-value" class="text-green-400">99.8%</span></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="status-dot bg-cyan-500"></span>
+                                <span class="text-gray-500">LATENCY: <span id="latency-value" class="text-cyan-400">12ms</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="platform-tabs">
+                        <button class="platform-tab active" data-platform="youtube">
+                            <i class="fab fa-youtube mr-2"></i>YouTube
+                        </button>
+                        <button class="platform-tab" data-platform="spotify">
+                            <i class="fab fa-spotify mr-2"></i>Spotify
+                        </button>
+                        <button class="platform-tab" data-platform="web">
+                            <i class="fas fa-search mr-2"></i>Web Search
+                        </button>
+                    </div>
+
+                    <div class="relative h-96 bg-black/50 rounded-lg overflow-hidden mb-6">
+                        <canvas id="audio-visualizer"></canvas>
+                        
+                        <div id="youtube-container">
+                            <div id="youtube-player"></div>
+                        </div>
+                        
+                        <div id="spotify-container">
+                            <div class="platform-overlay">
+                                <div class="text-center">
+                                    <i class="fab fa-spotify text-4xl mb-4 text-[#1DB954]"></i>
+                                    <p>Generate a track to load Spotify preview</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="web-search-container">
+                            <iframe id="web-search-frame" class="w-full h-full border-none" src="about:blank"></iframe>
+                        </div>
+
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div id="track-loader" class="hidden">
+                                <div class="loader"></div>
+                            </div>
+                            <div id="track-display" class="text-center max-w-2xl px-8">
+                                <h2 id="track-title" class="text-4xl font-black mb-4 tracking-tight uppercase italic">
+                                    AWAITING NEURAL INPUT
+                                </h2>
+                                <p id="track-description" class="text-sm text-cyan-400/70 leading-relaxed">
+                                    Enter neural prompt below to synthesize audio experience
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6">
+                        <button id="play-btn" class="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-black flex items-center justify-center hover:scale-110 transition shadow-[0_0_30px_rgba(0,242,255,0.5)] flex-shrink-0">
+                            <i class="fas fa-play text-xl ml-1"></i>
+                        </button>
+
+                        <div class="flex-1">
+                            <div class="flex justify-between text-[10px] text-cyan-400 mb-2 uppercase tracking-widest font-bold font-mono">
+                                <span id="time-current">00:00</span>
+                                <span class="text-gray-600">NEURAL AUDIO STREAM</span>
+                                <span id="time-total">00:00</span>
+                            </div>
+                            <div id="progress-bar" class="h-2 bg-cyan-900/30 rounded-full cursor-pointer relative overflow-hidden">
+                                <div id="progress-fill" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-0 shadow-[0_0_15px_rgba(0,242,255,0.8)]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="platform-links" class="platform-links-container mt-4 hidden">
+                        <h3 class="text-sm font-bold mb-3 text-cyan-400 uppercase tracking-wider">Available On:</h3>
+                        <a id="link-spotify" target="_blank" class="platform-link spotify">
+                            <i class="fab fa-spotify"></i> Spotify
+                        </a>
+                        <a id="link-youtube" target="_blank" class="platform-link youtube">
+                            <i class="fab fa-youtube"></i> YouTube
+                        </a>
+                        <a id="link-apple" target="_blank" class="platform-link apple">
+                            <i class="fab fa-apple"></i> Apple Music
+                        </a>
+                        <a id="link-soundcloud" target="_blank" class="platform-link soundcloud">
+                            <i class="fab fa-soundcloud"></i> SoundCloud
+                        </a>
+                        <a id="link-google" target="_blank" class="platform-link google">
+                            <i class="fab fa-google"></i> Web Search
+                        </a>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex gap-4">
+                        <textarea 
+                            id="neural-prompt" 
+                            placeholder="Describe neural atmosphere (e.g., Dark Phonk in Tokyo Rain, Cyberpunk Chase Music, Lofi Study Beats for Rainy Day)..." 
+                            class="flex-1 bg-black/30 border border-cyan-900/50 rounded-lg p-4 text-sm text-white focus:border-cyan-400 outline-none resize-none h-24 custom-scroll"></textarea>
+                        <button 
+                            id="execute-btn"
+                            class="px-12 bg-gradient-to-r from-white to-cyan-100 text-black font-black text-xs uppercase tracking-[0.3em] hover:from-cyan-400 hover:to-blue-400 transition rounded-lg shadow-lg flex-shrink-0 self-stretch">
+                            <i class="fas fa-bolt mr-2"></i>EXECUTE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="archives-layer" class="layer">
+            <div class="w-full max-w-4xl">
+                <div class="mb-8">
+                    <h2 class="text-4xl font-black italic mb-2 tracking-tight">NEURAL_ARCHIVES</h2>
+                    <p class="text-sm text-gray-500">Historical synthesis records with neural hashes</p>
+                </div>
+                
+                <div id="history-container" class="space-y-4">
+                    <div class="glass-card p-8 text-center text-gray-600">
+                        <i class="fas fa-database text-4xl mb-4 opacity-30"></i>
+                        <p class="italic">No previous neural sessions found...</p>
+                        <p class="text-xs mt-2 opacity-50">Neural hashes will appear here after synthesis</p>
+                    </div>
+                </div>
+
+                <button id="clear-archives-btn" class="hidden mt-6 px-6 py-3 bg-red-900/20 border border-red-900 text-red-400 text-xs uppercase tracking-wide hover:bg-red-900/40 transition rounded-lg">
+                    <i class="fas fa-trash-alt mr-2"></i>Purge Archives
+                </button>
+            </div>
+        </div>
+
+        <div id="uplink-layer" class="layer">
+            <div class="glass-card p-12 w-[600px]">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-black mb-3 uppercase tracking-tight">Operator Uplink</h2>
+                    <p class="text-xs text-cyan-600 uppercase tracking-widest">Transmit Bio-Data to Command Center</p>
+                </div>
+
+                <form id="uplink-form" class="space-y-6">
+                    <input type="hidden" name="access_key" value="">
+                    <input type="hidden" name="subject" value="New SAIFOUNA Operator Uplink">
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-gray-500 block">Operator Designation</label>
+                        <input 
+                            type="text" 
+                            name="operator_name" 
+                            placeholder="Full Name"
+                            class="w-full bg-black/30 border border-cyan-900/50 p-4 rounded-lg outline-none focus:border-cyan-400 transition"
+                            required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-gray-500 block">Uplink Frequency</label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            placeholder="operator@neural.net"
+                            class="w-full bg-black/30 border border-cyan-900/50 p-4 rounded-lg outline-none focus:border-cyan-400 transition"
+                            required>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-gray-500 block">Neural Preferences</label>
+                        <textarea 
+                            name="preferences"
+                            placeholder="Describe your music preferences, favorite genres, mood preferences..."
+                            class="w-full bg-black/30 border border-cyan-900/50 p-4 rounded-lg h-32 outline-none focus:border-cyan-400 transition resize-none custom-scroll"></textarea>
+                    </div>
+
+                    <button 
+                        type="submit"
+                        class="w-full py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-black text-xs uppercase tracking-[0.3em] hover:from-cyan-400 hover:to-blue-500 transition rounded-lg shadow-lg">
+                        <i class="fas fa-paper-plane mr-2"></i>Transmit Data
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="research-layer" class="layer">
+            <div class="w-full max-w-6xl">
+                <div class="mb-8">
+                    <h2 class="text-4xl font-black italic mb-2 tracking-tight">NEURAL_RESEARCH</h2>
+                    <p class="text-sm text-gray-500">Search web for music information, artist bios, genres, and more</p>
+                </div>
+
+                <div class="glass-card p-8 mb-6">
+                    <div class="flex gap-4 mb-6">
+                        <input 
+                            type="text" 
+                            id="research-query" 
+                            placeholder="Search for music info (e.g., 'history of synthwave', 'top phonk artists 2024', 'what is lofi hiphop')..."
+                            class="flex-1 bg-black/30 border border-cyan-900/50 rounded-lg p-4 text-white focus:border-cyan-400 outline-none">
+                        <button 
+                            id="research-btn"
+                            class="px-8 bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold hover:from-cyan-400 hover:to-blue-500 transition rounded-lg">
+                            <i class="fas fa-search mr-2"></i>SEARCH
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <button class="research-quick-btn p-4 glass-card hover:bg-cyan-900/20 transition text-center" data-query="music theory basics">
+                            <i class="fas fa-music text-cyan-400 mb-2 text-2xl"></i>
+                            <p class="text-sm">Music Theory</p>
+                        </button>
+                        <button class="research-quick-btn p-4 glass-card hover:bg-cyan-900/20 transition text-center" data-query="top music genres 2024">
+                            <i class="fas fa-chart-line text-cyan-400 mb-2 text-2xl"></i>
+                            <p class="text-sm">Trending Genres</p>
+                        </button>
+                        <button class="research-quick-btn p-4 glass-card hover:bg-cyan-900/20 transition text-center" data-query="music production tutorials">
+                            <i class="fas fa-sliders-h text-cyan-400 mb-2 text-2xl"></i>
+                            <p class="text-sm">Production</p>
+                        </button>
+                    </div>
+
+                    <div class="h-96 bg-black/30 rounded-lg overflow-hidden">
+                        <iframe id="research-frame" class="w-full h-full" src="https://www.google.com/search?igu=1&q=music+information"></iframe>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold mb-4 text-cyan-400">Music Databases</h3>
+                        <div class="space-y-3">
+                            <a href="https://www.allmusic.com" target="_blank" class="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition">
+                                <i class="fab fa-lastfm text-purple-400"></i>
+                                <div>
+                                    <p class="font-medium">AllMusic</p>
+                                    <p class="text-xs text-gray-500">Artist bios & discographies</p>
+                                </div>
+                            </a>
+                            <a href="https://www.whosampled.com" target="_blank" class="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition">
+                                <i class="fas fa-exchange-alt text-green-400"></i>
+                                <div>
+                                    <p class="font-medium">WhoSampled</p>
+                                    <p class="text-xs text-gray-500">Sample & cover info</p>
+                                </div>
+                            </a>
+                            <a href="https://www.rateyourmusic.com" target="_blank" class="flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <div>
+                                    <p class="font-medium">RateYourMusic</p>
+                                    <p class="text-xs text-gray-500">Community reviews</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold mb-4 text-cyan-400">Recent Searches</h3>
+                        <div id="recent-searches" class="space-y-2">
+                            <p class="text-sm text-gray-500 italic">No recent searches yet...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
